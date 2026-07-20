@@ -1,0 +1,15 @@
+"""
+Project-wide constants.
+"""
+
+CASE_PREFIX = "CASE"
+
+EVIDENCE_PREFIX = "EV"
+
+REPORT_PREFIX = "REP"
+
+AUDIT_PREFIX = "AUD"
+
+CUSTODY_PREFIX = "COC"
+
+DEFAULT_PAGE_SIZE = 20
