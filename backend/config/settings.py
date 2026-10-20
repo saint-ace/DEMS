@@ -72,6 +72,8 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "drf_spectacular",
+    "drf_spectacular_sidecar",
 
     # Third-party Apps
     "rest_framework",
@@ -265,6 +267,9 @@ REST_FRAMEWORK = {
         "rest_framework.filters.SearchFilter",
         "rest_framework.filters.OrderingFilter",
     ),
+    "DEFAULT_SCHEMA_CLASS": (
+    "drf_spectacular.openapi.AutoSchema",
+    ),
 }
 
 # ---------------------------------------------------------------------
@@ -306,8 +311,6 @@ SPECTACULAR_SETTINGS = {
         "REST API for the Digital Evidence Management System.",
 
     "VERSION": "1.0.0",
-
-    "SERVE_INCLUDE_SCHEMA": False,
 }
 
 # ---------------------------------------------------------------------
