@@ -104,9 +104,7 @@ class ProfileView(RetrieveAPIView):
 
 
 class UpdateProfileView(UpdateAPIView):
-
     serializer_class = UserUpdateSerializer
-
     permission_classes = [
         IsAuthenticatedAndActive,
     ]
@@ -115,50 +113,16 @@ class UpdateProfileView(UpdateAPIView):
         return self.request.user
 
     def update(self, request, *args, **kwargs):
-
         serializer = self.get_serializer(
-            self.get_object(),
+            request.user,
             data=request.data,
             partial=True,
         )
-
         serializer.is_valid(raise_exception=True)
-
         user = UserService.update_profile(
             request.user,
             serializer.validated_data,
         )
-
-        return Response(
-            {
-                "success": True,
-                "message": "Profile updated successfully.",
-                "data": UserSerializer(user).data,
-            }
-        )   
-
-    serializer_class = UserSerializer
-    permission_classes = [
-        IsAuthenticatedAndActive,
-    ]
-
-    def get_object(self):
-        return self.request.user
-
-    def update(self, request, *args, **kwargs):
-        serializer = self.get_serializer(
-            self.get_object(),
-            data=request.data,
-            partial=True,
-        )
-
-        serializer.is_valid(raise_exception=True)
-
-        user = UserService.update_profile(
-            self.request.user,
-            serializer.validated_data,
-        )
-
         return Response(
             {
                 "success": True,

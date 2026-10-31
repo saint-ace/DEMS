@@ -1,60 +1,35 @@
-import {
-    Drawer,
-    Toolbar,
-    List,
-    ListItemButton,
-    ListItemIcon,
-    ListItemText,
-} from "@mui/material";
-
-import { NavLink } from "react-router-dom";
-
-import menuItems from "./menuItems";
-
-const drawerWidth = 250;
+import { Link, NavLink } from "react-router-dom";
+import VerifiedUserRoundedIcon from "@mui/icons-material/VerifiedUserRounded";
+import menuItems from "./MenuItems";
 
 export default function Sidebar() {
-    return (
-        <Drawer
-            variant="permanent"
-            sx={{
-                width: drawerWidth,
-                flexShrink: 0,
-                "& .MuiDrawer-paper": {
-                    width: drawerWidth,
-                    boxSizing: "border-box",
-                },
-            }}
-        >
-            <Toolbar />
-
-            <List>
-                {menuItems.map((item) => (
-                    <ListItemButton
-                        key={item.text}
-                        component={NavLink}
-                        to={item.path}
-                        sx={{
-                            "&.active": {
-                                bgcolor: "primary.main",
-                                color: "white",
-
-                                "& .MuiListItemIcon-root": {
-                                    color: "white",
-                                },
-                            },
-                        }}
-                    >
-                        <ListItemIcon>
-                            {item.icon}
-                        </ListItemIcon>
-
-                        <ListItemText
-                            primary={item.text}
-                        />
-                    </ListItemButton>
-                ))}
-            </List>
-        </Drawer>
-    );
+  return (
+    <aside className="app-sidebar">
+      <Link className="app-sidebar__brand" to="/" aria-label="DEMS dashboard">
+        <span className="app-sidebar__shield"><VerifiedUserRoundedIcon /></span>
+        <span><strong>DEMS</strong><small>Evidence intelligence</small></span>
+      </Link>
+      <span className="app-sidebar__section">WORKSPACE</span>
+      <nav className="app-nav" aria-label="Main navigation">
+        {menuItems.map(({ text, icon, path }) => (
+          <NavLink
+            key={path}
+            to={path}
+            end={path === "/"}
+            className={({ isActive }) => `app-nav__link${isActive ? " is-active" : ""}`}
+          >
+            <span className="app-nav__icon">{icon}</span>
+            <span>{text}</span>
+            <span className="app-nav__active-mark" />
+          </NavLink>
+        ))}
+      </nav>
+      <div className="app-sidebar__security">
+        <span className="app-sidebar__security-icon"><VerifiedUserRoundedIcon /></span>
+        <div><strong>Secure workspace</strong><span>Access is monitored</span></div>
+        <i />
+      </div>
+      <div className="app-sidebar__footer">TRUST <i /> INTEGRITY <i /> JUSTICE</div>
+    </aside>
+  );
 }

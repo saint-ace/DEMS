@@ -8,6 +8,7 @@ File:
     views.py
 """
 
+from drf_spectacular.utils import extend_schema
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -25,6 +26,9 @@ from .serializers import (
 from .services import ReportService
 
 
+@extend_schema(
+    responses={200: ReportListSerializer(many=True)},
+)
 class ReportListView(APIView):
     """
     List all reports.
@@ -43,6 +47,9 @@ class ReportListView(APIView):
         return Response(serializer.data)
 
 
+@extend_schema(
+    responses={200: ReportDetailSerializer},
+)
 class ReportDetailView(APIView):
     """
     Retrieve a report.
@@ -58,6 +65,10 @@ class ReportDetailView(APIView):
         return Response(serializer.data)
 
 
+@extend_schema(
+    request=ReportGenerateSerializer,
+    responses={201: ReportDetailSerializer},
+)
 class GenerateReportView(APIView):
     """
     Generate a report.
@@ -94,6 +105,9 @@ class GenerateReportView(APIView):
         )
 
 
+@extend_schema(
+    responses={204: None},
+)
 class DeleteReportView(APIView):
     """
     Delete a report.

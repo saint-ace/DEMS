@@ -8,6 +8,7 @@ File:
     views.py
 """
 
+from drf_spectacular.utils import extend_schema
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status
@@ -86,6 +87,10 @@ class CustodyDetailView(RetrieveAPIView):
     permission_classes = [CanViewCustody]
 
 
+@extend_schema(
+    request=CustodyTransferSerializer,
+    responses={201: CustodyDetailSerializer},
+)
 class CustodyTransferView(APIView):
 
     permission_classes = [CanTransferEvidence]

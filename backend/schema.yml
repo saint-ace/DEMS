@@ -1,0 +1,2566 @@
+openapi: 3.0.3
+info:
+  title: Digital Evidence Management System API
+  version: 1.0.0
+  description: REST API for the Digital Evidence Management System.
+paths:
+  /api/audit/:
+    get:
+      operationId: audit_list
+      description: List audit logs.
+      parameters:
+      - in: query
+        name: action
+        schema:
+          type: string
+      - in: query
+        name: created_after
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: created_before
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: module
+        schema:
+          type: string
+      - in: query
+        name: object_type
+        schema:
+          type: string
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      - in: query
+        name: username
+        schema:
+          type: string
+      tags:
+      - audit
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AuditLog'
+          description: ''
+  /api/audit/{id}/:
+    get:
+      operationId: audit_retrieve
+      description: Retrieve a single audit log.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - audit
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuditLog'
+          description: ''
+  /api/auth/change-password/:
+    post:
+      operationId: auth_change_password_create
+      description: Change the authenticated user's password.
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChangePassword'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ChangePassword'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ChangePassword'
+        required: true
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+          description: ''
+  /api/auth/login/:
+    post:
+      operationId: auth_login_create
+      description: Authenticate a user.
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Login'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Login'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Login'
+        required: true
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+          description: ''
+  /api/auth/profile/:
+    get:
+      operationId: auth_profile_retrieve
+      description: Return the authenticated user's profile.
+      tags:
+      - auth
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+  /api/auth/profile/update/:
+    put:
+      operationId: auth_profile_update_update
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/User'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/User'
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+    patch:
+      operationId: auth_profile_update_partial_update
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedUser'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedUser'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedUser'
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+  /api/auth/register/:
+    post:
+      operationId: auth_register_create
+      description: Register a new user.
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Register'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Register'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Register'
+        required: true
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Register'
+          description: ''
+  /api/auth/users/:
+    get:
+      operationId: auth_users_list
+      description: List all users.
+      parameters:
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - auth
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+          description: ''
+  /api/cases/:
+    get:
+      operationId: cases_list
+      parameters:
+      - in: query
+        name: case_number
+        schema:
+          type: string
+      - in: query
+        name: case_type
+        schema:
+          type: string
+      - in: query
+        name: department
+        schema:
+          type: string
+      - in: query
+        name: incident_after
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: incident_before
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: investigator
+        schema:
+          type: string
+      - in: query
+        name: opened_after
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: opened_before
+        schema:
+          type: string
+          format: date
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - in: query
+        name: priority
+        schema:
+          type: string
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      - in: query
+        name: status
+        schema:
+          type: string
+      - in: query
+        name: title
+        schema:
+          type: string
+      tags:
+      - cases
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CaseList'
+          description: ''
+  /api/cases/{id}/:
+    get:
+      operationId: cases_retrieve
+      description: Retrieve a single case.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - cases
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CaseDetail'
+          description: ''
+  /api/cases/{id}/archive/:
+    post:
+      operationId: cases_archive_create
+      description: Archive a case.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - cases
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CaseDetail'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CaseDetail'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CaseDetail'
+        required: true
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CaseDetail'
+          description: ''
+  /api/cases/{id}/close/:
+    post:
+      operationId: cases_close_create
+      description: Close a case.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - cases
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CaseDetail'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CaseDetail'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CaseDetail'
+        required: true
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CaseDetail'
+          description: ''
+  /api/cases/{id}/delete/:
+    delete:
+      operationId: cases_delete_destroy
+      description: Delete a case.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - cases
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/cases/{id}/reopen/:
+    post:
+      operationId: cases_reopen_create
+      description: Reopen a case.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - cases
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CaseDetail'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CaseDetail'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CaseDetail'
+        required: true
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CaseDetail'
+          description: ''
+  /api/cases/{id}/update/:
+    put:
+      operationId: cases_update_update
+      description: Update an existing case.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - cases
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CaseUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CaseUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CaseUpdate'
+        required: true
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CaseUpdate'
+          description: ''
+    patch:
+      operationId: cases_update_partial_update
+      description: Update an existing case.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - cases
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedCaseUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedCaseUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedCaseUpdate'
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CaseUpdate'
+          description: ''
+  /api/cases/create/:
+    post:
+      operationId: cases_create_create
+      description: Create a new case.
+      tags:
+      - cases
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CaseCreate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CaseCreate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CaseCreate'
+        required: true
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CaseCreate'
+          description: ''
+  /api/custody/:
+    get:
+      operationId: custody_list
+      description: List all custody records.
+      parameters:
+      - in: query
+        name: action
+        schema:
+          type: string
+      - in: query
+        name: evidence
+        schema:
+          type: string
+          format: uuid
+      - in: query
+        name: from_user
+        schema:
+          type: string
+          format: uuid
+      - in: query
+        name: location
+        schema:
+          type: string
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      - in: query
+        name: to_user
+        schema:
+          type: string
+          format: uuid
+      - in: query
+        name: transferred_after
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: transferred_before
+        schema:
+          type: string
+          format: date-time
+      tags:
+      - custody
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CustodyList'
+          description: ''
+  /api/custody/{id}/:
+    get:
+      operationId: custody_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - custody
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustodyDetail'
+          description: ''
+  /api/custody/transfer/:
+    post:
+      operationId: custody_transfer_create
+      tags:
+      - custody
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustodyTransfer'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CustodyTransfer'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CustodyTransfer'
+        required: true
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustodyDetail'
+          description: ''
+  /api/evidence/:
+    get:
+      operationId: evidence_list
+      description: List all evidence.
+      parameters:
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - evidence
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EvidenceList'
+          description: ''
+  /api/evidence/{id}/:
+    get:
+      operationId: evidence_retrieve
+      description: Retrieve a single evidence item.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - evidence
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EvidenceDetail'
+          description: ''
+  /api/evidence/upload/:
+    post:
+      operationId: evidence_upload_create
+      description: Upload new evidence.
+      tags:
+      - evidence
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EvidenceUpload'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/EvidenceUpload'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/EvidenceUpload'
+        required: true
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EvidenceDetail'
+          description: ''
+  /api/rbac/assignments/:
+    get:
+      operationId: rbac_assignments_list
+      description: List all user-role assignments.
+      parameters:
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - rbac
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserRole'
+          description: ''
+  /api/rbac/permissions/:
+    get:
+      operationId: rbac_permissions_list
+      description: List all permissions.
+      parameters:
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - rbac
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Permission'
+          description: ''
+  /api/rbac/roles/:
+    get:
+      operationId: rbac_roles_list
+      description: List all roles.
+      parameters:
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - rbac
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Role'
+          description: ''
+  /api/reports/:
+    get:
+      operationId: reports_list
+      description: List all reports.
+      tags:
+      - reports
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ReportList'
+          description: ''
+  /api/reports/{report_id}/:
+    get:
+      operationId: reports_retrieve
+      description: Retrieve a report.
+      parameters:
+      - in: path
+        name: report_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - reports
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportDetail'
+          description: ''
+  /api/reports/{report_id}/delete/:
+    delete:
+      operationId: reports_delete_destroy
+      description: Delete a report.
+      parameters:
+      - in: path
+        name: report_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - reports
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/reports/generate/:
+    post:
+      operationId: reports_generate_create
+      description: Generate a report.
+      tags:
+      - reports
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReportGenerate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ReportGenerate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ReportGenerate'
+        required: true
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportDetail'
+          description: ''
+  /api/schema/:
+    get:
+      operationId: schema_retrieve
+      description: |-
+        OpenApi3 schema for this API. Format can be selected via content negotiation.
+
+        - YAML: application/vnd.oai.openapi
+        - JSON: application/vnd.oai.openapi+json
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - json
+          - yaml
+      - in: query
+        name: lang
+        schema:
+          type: string
+          enum:
+          - af
+          - ar
+          - ar-dz
+          - ast
+          - az
+          - be
+          - bg
+          - bn
+          - br
+          - bs
+          - ca
+          - ckb
+          - cs
+          - cy
+          - da
+          - de
+          - dsb
+          - el
+          - en
+          - en-au
+          - en-gb
+          - eo
+          - es
+          - es-ar
+          - es-co
+          - es-mx
+          - es-ni
+          - es-ve
+          - et
+          - eu
+          - fa
+          - fi
+          - fr
+          - fy
+          - ga
+          - gd
+          - gl
+          - he
+          - hi
+          - hr
+          - hsb
+          - ht
+          - hu
+          - hy
+          - ia
+          - id
+          - ig
+          - io
+          - is
+          - it
+          - ja
+          - ka
+          - kab
+          - kk
+          - km
+          - kn
+          - ko
+          - ky
+          - lb
+          - lt
+          - lv
+          - mk
+          - ml
+          - mn
+          - mr
+          - ms
+          - my
+          - nb
+          - ne
+          - nl
+          - nn
+          - os
+          - pa
+          - pl
+          - pt
+          - pt-br
+          - ro
+          - ru
+          - sk
+          - sl
+          - sq
+          - sr
+          - sr-latn
+          - sv
+          - sw
+          - ta
+          - te
+          - tg
+          - th
+          - tk
+          - tr
+          - tt
+          - udm
+          - ug
+          - uk
+          - ur
+          - uz
+          - vi
+          - zh-hans
+          - zh-hant
+      tags:
+      - schema
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/vnd.oai.openapi:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/yaml:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/vnd.oai.openapi+json:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+  /api/storage/:
+    get:
+      operationId: storage_list
+      description: List all stored files.
+      parameters:
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - storage
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StorageFile'
+          description: ''
+  /api/storage/{id}/:
+    get:
+      operationId: storage_retrieve
+      description: Retrieve a stored file.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - storage
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StorageFile'
+          description: ''
+components:
+  schemas:
+    Action3daEnum:
+      enum:
+      - COLLECTED
+      - TRANSFERRED
+      - RECEIVED
+      - ANALYZED
+      - RETURNED
+      - ARCHIVED
+      type: string
+      description: |-
+        * `COLLECTED` - Collected
+        * `TRANSFERRED` - Transferred
+        * `RECEIVED` - Received
+        * `ANALYZED` - Analyzed
+        * `RETURNED` - Returned
+        * `ARCHIVED` - Archived
+    AuditLog:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        username:
+          type: string
+          readOnly: true
+        module:
+          type: string
+          readOnly: true
+        action:
+          allOf:
+          - $ref: '#/components/schemas/AuditLogActionEnum'
+          readOnly: true
+        object_type:
+          type: string
+          readOnly: true
+        object_id:
+          type: string
+          readOnly: true
+        description:
+          type: string
+          readOnly: true
+        ip_address:
+          type: string
+          readOnly: true
+          nullable: true
+        user_agent:
+          type: string
+          readOnly: true
+      required:
+      - action
+      - created_at
+      - description
+      - id
+      - ip_address
+      - module
+      - object_id
+      - object_type
+      - user_agent
+      - username
+    AuditLogActionEnum:
+      enum:
+      - CREATE
+      - UPDATE
+      - DELETE
+      - VIEW
+      - LOGIN
+      - LOGOUT
+      - DOWNLOAD
+      - VERIFY
+      - ASSIGN
+      - CLOSE
+      - ARCHIVE
+      type: string
+      description: |-
+        * `CREATE` - Create
+        * `UPDATE` - Update
+        * `DELETE` - Delete
+        * `VIEW` - View
+        * `LOGIN` - Login
+        * `LOGOUT` - Logout
+        * `DOWNLOAD` - Download
+        * `VERIFY` - Verify
+        * `ASSIGN` - Assign
+        * `CLOSE` - Close
+        * `ARCHIVE` - Archive
+    CaseAssignment:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        user:
+          type: string
+          format: uuid
+        user_name:
+          type: string
+          readOnly: true
+        assigned_by:
+          type: string
+          format: uuid
+        assigned_by_name:
+          type: string
+          readOnly: true
+        assigned_at:
+          type: string
+          format: date-time
+          readOnly: true
+        active:
+          type: boolean
+      required:
+      - assigned_at
+      - assigned_by
+      - assigned_by_name
+      - id
+      - user
+      - user_name
+    CaseAttachment:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        file:
+          type: string
+          format: uri
+        description:
+          type: string
+          maxLength: 255
+        uploaded_by:
+          type: string
+          format: uuid
+        uploaded_by_name:
+          type: string
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - file
+      - id
+      - uploaded_by
+      - uploaded_by_name
+    CaseCreate:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        title:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+        court_reference:
+          type: string
+          maxLength: 150
+        incident_location:
+          type: string
+          maxLength: 255
+        incident_date:
+          type: string
+          format: date
+          nullable: true
+        date_opened:
+          type: string
+          format: date
+        date_closed:
+          type: string
+          format: date
+          nullable: true
+        remarks:
+          type: string
+        case_type:
+          type: string
+          format: uuid
+        status:
+          type: string
+          format: uuid
+        priority:
+          type: string
+          format: uuid
+        lead_investigator:
+          type: string
+          format: uuid
+          nullable: true
+        created_by:
+          type: string
+          format: uuid
+        department:
+          type: string
+          format: uuid
+      required:
+      - case_type
+      - created_by
+      - date_opened
+      - department
+      - description
+      - id
+      - priority
+      - status
+      - title
+    CaseDetail:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        case_type:
+          allOf:
+          - $ref: '#/components/schemas/CaseType'
+          readOnly: true
+        status:
+          allOf:
+          - $ref: '#/components/schemas/CaseStatus'
+          readOnly: true
+        priority:
+          allOf:
+          - $ref: '#/components/schemas/CasePriority'
+          readOnly: true
+        assignments:
+          type: array
+          items:
+            $ref: '#/components/schemas/CaseAssignment'
+          readOnly: true
+        notes:
+          type: array
+          items:
+            $ref: '#/components/schemas/CaseNote'
+          readOnly: true
+        attachments:
+          type: array
+          items:
+            $ref: '#/components/schemas/CaseAttachment'
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        case_number:
+          type: string
+          readOnly: true
+          description: Automatically generated unique case number.
+        title:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+        court_reference:
+          type: string
+          maxLength: 150
+        incident_location:
+          type: string
+          maxLength: 255
+        incident_date:
+          type: string
+          format: date
+          nullable: true
+        date_opened:
+          type: string
+          format: date
+        date_closed:
+          type: string
+          format: date
+          nullable: true
+        remarks:
+          type: string
+        lead_investigator:
+          type: string
+          format: uuid
+          nullable: true
+        created_by:
+          type: string
+          format: uuid
+        department:
+          type: string
+          format: uuid
+      required:
+      - assignments
+      - attachments
+      - case_number
+      - case_type
+      - created_at
+      - created_by
+      - date_opened
+      - department
+      - description
+      - id
+      - notes
+      - priority
+      - status
+      - title
+      - updated_at
+    CaseList:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        case_number:
+          type: string
+          readOnly: true
+          description: Automatically generated unique case number.
+        title:
+          type: string
+          maxLength: 255
+        case_type:
+          type: string
+          readOnly: true
+        status:
+          type: string
+          readOnly: true
+        priority:
+          type: string
+          readOnly: true
+        lead_investigator:
+          type: string
+          readOnly: true
+        date_opened:
+          type: string
+          format: date
+      required:
+      - case_number
+      - case_type
+      - date_opened
+      - id
+      - lead_investigator
+      - priority
+      - status
+      - title
+    CaseNote:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        author:
+          type: string
+          format: uuid
+        author_name:
+          type: string
+          readOnly: true
+        note:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - author
+      - author_name
+      - created_at
+      - id
+      - note
+    CasePriority:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        code:
+          type: string
+          maxLength: 20
+        name:
+          type: string
+          maxLength: 50
+        color:
+          type: string
+          maxLength: 20
+        order:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+        is_active:
+          type: boolean
+      required:
+      - code
+      - id
+      - name
+    CaseStatus:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        code:
+          type: string
+          maxLength: 30
+        name:
+          type: string
+          maxLength: 100
+        color:
+          type: string
+          maxLength: 20
+        order:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+        is_active:
+          type: boolean
+      required:
+      - code
+      - id
+      - name
+    CaseType:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        code:
+          type: string
+          maxLength: 30
+        name:
+          type: string
+          maxLength: 100
+        description:
+          type: string
+        is_active:
+          type: boolean
+      required:
+      - code
+      - id
+      - name
+    CaseUpdate:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        title:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+        court_reference:
+          type: string
+          maxLength: 150
+        incident_location:
+          type: string
+          maxLength: 255
+        incident_date:
+          type: string
+          format: date
+          nullable: true
+        date_opened:
+          type: string
+          format: date
+        date_closed:
+          type: string
+          format: date
+          nullable: true
+        remarks:
+          type: string
+        case_type:
+          type: string
+          format: uuid
+        status:
+          type: string
+          format: uuid
+        priority:
+          type: string
+          format: uuid
+        lead_investigator:
+          type: string
+          format: uuid
+          nullable: true
+        department:
+          type: string
+          format: uuid
+      required:
+      - case_type
+      - date_opened
+      - department
+      - description
+      - id
+      - priority
+      - status
+      - title
+    ChangePassword:
+      type: object
+      properties:
+        old_password:
+          type: string
+          writeOnly: true
+        new_password:
+          type: string
+          writeOnly: true
+          minLength: 8
+        confirm_password:
+          type: string
+          writeOnly: true
+      required:
+      - confirm_password
+      - new_password
+      - old_password
+    CustodyDetail:
+      type: object
+      description: Detailed custody record serializer.
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        evidence_number:
+          type: string
+          readOnly: true
+        from_username:
+          type: string
+          readOnly: true
+          nullable: true
+        to_username:
+          type: string
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        action:
+          $ref: '#/components/schemas/Action3daEnum'
+        location:
+          type: string
+          maxLength: 255
+        reason:
+          type: string
+        transferred_at:
+          type: string
+          format: date-time
+          readOnly: true
+        remarks:
+          type: string
+        evidence:
+          type: string
+          format: uuid
+        from_user:
+          type: string
+          format: uuid
+          nullable: true
+        to_user:
+          type: string
+          format: uuid
+      required:
+      - action
+      - created_at
+      - evidence
+      - evidence_number
+      - from_username
+      - id
+      - location
+      - reason
+      - to_user
+      - to_username
+      - transferred_at
+      - updated_at
+    CustodyList:
+      type: object
+      description: Serializer for listing custody records.
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        evidence_number:
+          type: string
+          readOnly: true
+        action:
+          $ref: '#/components/schemas/Action3daEnum'
+        from_user:
+          type: string
+          readOnly: true
+          nullable: true
+        to_user:
+          type: string
+          readOnly: true
+        location:
+          type: string
+          maxLength: 255
+        transferred_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - action
+      - evidence_number
+      - from_user
+      - id
+      - location
+      - to_user
+      - transferred_at
+    CustodyTransfer:
+      type: object
+      description: Serializer used to transfer evidence.
+      properties:
+        evidence:
+          type: string
+          format: uuid
+        to_user:
+          type: string
+          format: uuid
+        action:
+          $ref: '#/components/schemas/Action3daEnum'
+        location:
+          type: string
+          maxLength: 255
+        reason:
+          type: string
+        remarks:
+          type: string
+      required:
+      - action
+      - evidence
+      - location
+      - reason
+      - to_user
+    EvidenceDetail:
+      type: object
+      description: Detailed serializer for evidence.
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        case:
+          type: string
+          format: uuid
+        case_number:
+          type: string
+          readOnly: true
+        evidence_number:
+          type: string
+          maxLength: 50
+        title:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+        evidence_type:
+          $ref: '#/components/schemas/EvidenceTypeEnum'
+        status:
+          $ref: '#/components/schemas/Status8bbEnum'
+        collected_by:
+          type: string
+          readOnly: true
+        collected_at:
+          type: string
+          format: date-time
+        notes:
+          type: string
+        original_filename:
+          type: string
+          readOnly: true
+        mime_type:
+          type: string
+          readOnly: true
+        extension:
+          type: string
+          readOnly: true
+        file_size:
+          type: integer
+          readOnly: true
+        md5_hash:
+          type: string
+          readOnly: true
+        sha1_hash:
+          type: string
+          readOnly: true
+        sha256_hash:
+          type: string
+          readOnly: true
+        verified:
+          type: boolean
+          readOnly: true
+        encrypted:
+          type: boolean
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - case
+      - case_number
+      - collected_at
+      - collected_by
+      - created_at
+      - encrypted
+      - evidence_number
+      - evidence_type
+      - extension
+      - file_size
+      - id
+      - md5_hash
+      - mime_type
+      - original_filename
+      - sha1_hash
+      - sha256_hash
+      - title
+      - updated_at
+      - verified
+    EvidenceList:
+      type: object
+      description: Serializer for listing evidence.
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        evidence_number:
+          type: string
+          maxLength: 50
+        title:
+          type: string
+          maxLength: 255
+        evidence_type:
+          $ref: '#/components/schemas/EvidenceTypeEnum'
+        status:
+          $ref: '#/components/schemas/Status8bbEnum'
+        case_number:
+          type: string
+          readOnly: true
+        collected_by:
+          type: string
+          readOnly: true
+        original_filename:
+          type: string
+          readOnly: true
+        file_size:
+          type: integer
+          readOnly: true
+        verified:
+          type: boolean
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - case_number
+      - collected_by
+      - created_at
+      - evidence_number
+      - evidence_type
+      - file_size
+      - id
+      - original_filename
+      - title
+      - verified
+    EvidenceTypeEnum:
+      enum:
+      - DISK_IMAGE
+      - MEMORY_DUMP
+      - DOCUMENT
+      - IMAGE
+      - VIDEO
+      - AUDIO
+      - NETWORK_CAPTURE
+      - MOBILE_EXTRACTION
+      - OTHER
+      type: string
+      description: |-
+        * `DISK_IMAGE` - Disk Image
+        * `MEMORY_DUMP` - Memory Dump
+        * `DOCUMENT` - Document
+        * `IMAGE` - Image
+        * `VIDEO` - Video
+        * `AUDIO` - Audio
+        * `NETWORK_CAPTURE` - Network Capture
+        * `MOBILE_EXTRACTION` - Mobile Extraction
+        * `OTHER` - Other
+    EvidenceUpload:
+      type: object
+      description: Serializer for uploading new evidence.
+      properties:
+        case:
+          type: string
+          format: uuid
+        title:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+        evidence_type:
+          $ref: '#/components/schemas/EvidenceTypeEnum'
+        notes:
+          type: string
+        file:
+          type: string
+          format: uri
+      required:
+      - case
+      - evidence_type
+      - file
+      - title
+    Login:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+          writeOnly: true
+      required:
+      - password
+      - username
+    LoginResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        data:
+          $ref: '#/components/schemas/LoginResponseData'
+      required:
+      - data
+      - message
+      - success
+    LoginResponseData:
+      type: object
+      properties:
+        user:
+          $ref: '#/components/schemas/User'
+        tokens:
+          $ref: '#/components/schemas/LoginTokens'
+      required:
+      - tokens
+      - user
+    LoginTokens:
+      type: object
+      properties:
+        access:
+          type: string
+        refresh:
+          type: string
+      required:
+      - access
+      - refresh
+    PatchedCaseUpdate:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        title:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+        court_reference:
+          type: string
+          maxLength: 150
+        incident_location:
+          type: string
+          maxLength: 255
+        incident_date:
+          type: string
+          format: date
+          nullable: true
+        date_opened:
+          type: string
+          format: date
+        date_closed:
+          type: string
+          format: date
+          nullable: true
+        remarks:
+          type: string
+        case_type:
+          type: string
+          format: uuid
+        status:
+          type: string
+          format: uuid
+        priority:
+          type: string
+          format: uuid
+        lead_investigator:
+          type: string
+          format: uuid
+          nullable: true
+        department:
+          type: string
+          format: uuid
+    PatchedUser:
+      type: object
+      description: Read-only user profile serializer.
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        username:
+          type: string
+          readOnly: true
+          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+            only.
+        email:
+          type: string
+          format: email
+          readOnly: true
+        first_name:
+          type: string
+          readOnly: true
+        last_name:
+          type: string
+          readOnly: true
+        employee_number:
+          type: string
+          readOnly: true
+        badge_number:
+          type: string
+          readOnly: true
+          nullable: true
+        phone_number:
+          type: string
+          readOnly: true
+        department:
+          type: string
+          readOnly: true
+        role:
+          type: string
+          readOnly: true
+        profile_image:
+          type: string
+          format: uri
+          nullable: true
+          readOnly: true
+        is_active:
+          type: boolean
+          readOnly: true
+          title: Active
+          description: Designates whether this user should be treated as active. Unselect
+            this instead of deleting accounts.
+        date_joined:
+          type: string
+          format: date-time
+          readOnly: true
+    Permission:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        code:
+          type: string
+          maxLength: 100
+        name:
+          type: string
+          maxLength: 200
+        description:
+          type: string
+      required:
+      - code
+      - created_at
+      - id
+      - name
+      - updated_at
+    Register:
+      type: object
+      description: Serializer for administrator-created users.
+      properties:
+        username:
+          type: string
+          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+            only.
+          pattern: ^[\w.@+-]+$
+          maxLength: 150
+        email:
+          type: string
+          format: email
+          maxLength: 254
+        password:
+          type: string
+          writeOnly: true
+          minLength: 8
+        confirm_password:
+          type: string
+          writeOnly: true
+        first_name:
+          type: string
+          maxLength: 150
+        last_name:
+          type: string
+          maxLength: 150
+        employee_number:
+          type: string
+          maxLength: 30
+        badge_number:
+          type: string
+          nullable: true
+          maxLength: 30
+        phone_number:
+          type: string
+          maxLength: 20
+        department:
+          type: string
+          format: uuid
+          nullable: true
+        role:
+          type: string
+          format: uuid
+          nullable: true
+      required:
+      - confirm_password
+      - email
+      - employee_number
+      - password
+      - username
+    ReportDetail:
+      type: object
+      description: Detailed report serializer.
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        report_number:
+          type: string
+          maxLength: 50
+        title:
+          type: string
+          maxLength: 255
+        report_type:
+          $ref: '#/components/schemas/ReportTypeEnum'
+        status:
+          $ref: '#/components/schemas/StatusF31Enum'
+        generated_by:
+          type: string
+          readOnly: true
+        generated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        notes:
+          type: string
+        file_name:
+          type: string
+          readOnly: true
+        file_size:
+          type: integer
+          readOnly: true
+        sha256_hash:
+          type: string
+          readOnly: true
+      required:
+      - file_name
+      - file_size
+      - generated_at
+      - generated_by
+      - id
+      - report_number
+      - report_type
+      - sha256_hash
+      - title
+    ReportGenerate:
+      type: object
+      description: Serializer used when generating reports.
+      properties:
+        report_type:
+          $ref: '#/components/schemas/ReportTypeEnum'
+        object_id:
+          type: string
+          format: uuid
+        title:
+          type: string
+          maxLength: 255
+        notes:
+          type: string
+      required:
+      - object_id
+      - report_type
+      - title
+    ReportList:
+      type: object
+      description: Serializer for listing reports.
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        report_number:
+          type: string
+          maxLength: 50
+        title:
+          type: string
+          maxLength: 255
+        report_type:
+          $ref: '#/components/schemas/ReportTypeEnum'
+        status:
+          $ref: '#/components/schemas/StatusF31Enum'
+        generated_by:
+          type: string
+          readOnly: true
+        generated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - generated_at
+      - generated_by
+      - id
+      - report_number
+      - report_type
+      - title
+    ReportTypeEnum:
+      enum:
+      - CASE
+      - EVIDENCE
+      - CUSTODY
+      - AUDIT
+      type: string
+      description: |-
+        * `CASE` - Case Report
+        * `EVIDENCE` - Evidence Report
+        * `CUSTODY` - Chain of Custody Report
+        * `AUDIT` - Audit Report
+    Role:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        name:
+          type: string
+          maxLength: 100
+        description:
+          type: string
+      required:
+      - created_at
+      - id
+      - name
+      - updated_at
+    Status8bbEnum:
+      enum:
+      - COLLECTED
+      - IN_ANALYSIS
+      - ANALYZED
+      - PRESENTED
+      - ARCHIVED
+      - DISPOSED
+      type: string
+      description: |-
+        * `COLLECTED` - Collected
+        * `IN_ANALYSIS` - In Analysis
+        * `ANALYZED` - Analyzed
+        * `PRESENTED` - Presented
+        * `ARCHIVED` - Archived
+        * `DISPOSED` - Disposed
+    StatusF31Enum:
+      enum:
+      - GENERATING
+      - COMPLETED
+      - FAILED
+      type: string
+      description: |-
+        * `GENERATING` - Generating
+        * `COMPLETED` - Completed
+        * `FAILED` - Failed
+    StorageFile:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        original_name:
+          type: string
+          maxLength: 255
+        mime_type:
+          type: string
+          maxLength: 100
+        extension:
+          type: string
+          maxLength: 20
+        file_size:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+        md5_hash:
+          type: string
+          maxLength: 32
+        sha1_hash:
+          type: string
+          maxLength: 40
+        sha256_hash:
+          type: string
+          maxLength: 64
+        uploaded_by:
+          type: string
+          readOnly: true
+        verified:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - extension
+      - file_size
+      - id
+      - md5_hash
+      - mime_type
+      - original_name
+      - sha1_hash
+      - sha256_hash
+      - uploaded_by
+    User:
+      type: object
+      description: Read-only user profile serializer.
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        username:
+          type: string
+          readOnly: true
+          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+            only.
+        email:
+          type: string
+          format: email
+          readOnly: true
+        first_name:
+          type: string
+          readOnly: true
+        last_name:
+          type: string
+          readOnly: true
+        employee_number:
+          type: string
+          readOnly: true
+        badge_number:
+          type: string
+          readOnly: true
+          nullable: true
+        phone_number:
+          type: string
+          readOnly: true
+        department:
+          type: string
+          readOnly: true
+        role:
+          type: string
+          readOnly: true
+        profile_image:
+          type: string
+          format: uri
+          nullable: true
+          readOnly: true
+        is_active:
+          type: boolean
+          readOnly: true
+          title: Active
+          description: Designates whether this user should be treated as active. Unselect
+            this instead of deleting accounts.
+        date_joined:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - badge_number
+      - date_joined
+      - department
+      - email
+      - employee_number
+      - first_name
+      - id
+      - is_active
+      - last_name
+      - phone_number
+      - profile_image
+      - role
+      - username
+    UserRole:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        username:
+          type: string
+          readOnly: true
+        role_name:
+          type: string
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - id
+      - role_name
+      - username
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: sessionid
+    jwtAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

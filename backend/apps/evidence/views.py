@@ -8,6 +8,7 @@ File:
     views.py
 """
 
+from drf_spectacular.utils import extend_schema
 from rest_framework import status
 from rest_framework.generics import (
     ListAPIView,
@@ -63,6 +64,10 @@ class EvidenceDetailView(RetrieveAPIView):
         return EvidenceService.list_evidence()
 
 
+@extend_schema(
+    request=EvidenceUploadSerializer,
+    responses={201: EvidenceDetailSerializer},
+)
 class EvidenceUploadView(APIView):
     """
     Upload new evidence.

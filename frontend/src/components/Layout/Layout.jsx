@@ -1,34 +1,21 @@
-import {
-    Box,
-    Toolbar,
-} from "@mui/material";
-
 import { Outlet } from "react-router-dom";
-
 import Sidebar from "./Sidebar";
 import Topbar from "./Topbar";
 
 export default function Layout() {
-    return (
-        <Box sx={{ display: "flex" }}>
-
-            <Topbar />
-
-            <Sidebar />
-
-            <Box
-                component="main"
-                sx={{
-                    flexGrow: 1,
-                    p: 3,
-                }}
-            >
-                <Toolbar />
-
-                <Outlet />
-
-            </Box>
-
-        </Box>
-    );
+  return (
+    <div className="app-shell">
+      <Sidebar />
+      <div className="app-main">
+        <Topbar />
+        <main className="app-content">
+          <Outlet />
+        </main>
+        <footer className="app-footer">
+          <span>DEMS · Digital Evidence Management System</span>
+          <span>Secure records. Trusted chain of custody.</span>
+        </footer>
+      </div>
+    </div>
+  );
 }

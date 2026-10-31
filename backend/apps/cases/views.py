@@ -10,6 +10,7 @@ File:
 Purpose:
     REST API views for Case Management.
 """
+from drf_spectacular.utils import extend_schema
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import OrderingFilter, SearchFilter
 
@@ -180,12 +181,17 @@ class CaseUpdateView(UpdateAPIView):
         )
 
 
+@extend_schema(
+    responses={204: None},
+)
 class CaseDeleteView(DestroyAPIView):
     """
     Delete a case.
     """
 
     queryset = Case.objects.all()
+
+    serializer_class = CaseDetailSerializer
 
     permission_classes = [CanDeleteCase]
 
@@ -204,11 +210,16 @@ class CaseDeleteView(DestroyAPIView):
         )
 
 
+@extend_schema(
+    responses={200: CaseDetailSerializer},
+)
 class CloseCaseView(APIView):
     """
     Close a case.
     """
 
+    serializer_class = CaseDetailSerializer
+    
     permission_classes = [CanCloseCase]
 
     def post(self, request, pk):
@@ -226,11 +237,16 @@ class CloseCaseView(APIView):
         )
 
 
+@extend_schema(
+    responses={200: CaseDetailSerializer},
+)
 class ReopenCaseView(APIView):
     """
     Reopen a case.
     """
 
+    serializer_class = CaseDetailSerializer
+    
     permission_classes = [CanCloseCase]
 
     def post(self, request, pk):
@@ -248,11 +264,16 @@ class ReopenCaseView(APIView):
         )
 
 
+@extend_schema(
+    responses={200: CaseDetailSerializer},
+)
 class ArchiveCaseView(APIView):
     """
     Archive a case.
     """
 
+    serializer_class = CaseDetailSerializer
+    
     permission_classes = [CanArchiveCase]
 
     def post(self, request, pk):
